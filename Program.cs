@@ -2,8 +2,26 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
+using TheBlogProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Need to convert this to Visual Studio 2022
+public static async Task Main(string[] args)
+    {
+    var host = CreateHostBuilder(args).Build();
+
+
+    //Pull out my registered DataService
+    var DataService = host.Services
+                          .CreateScope()
+                          .ServiceProvider
+                          .GetRequiredService<DataService>();
+
+    await DataService.ManageDataAsync();
+
+    host.Run();
+}
 
 // Add services to the container.
 
@@ -20,6 +38,9 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
     
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+//Register my custom DataService class
+builder.Services.AddScoped<DataService>();
 
 var app = builder.Build();
 
