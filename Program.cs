@@ -6,23 +6,6 @@ using TheBlogProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Need to convert this to Visual Studio 2022
-public static async Task Main(string[] args)
-    {
-    var host = CreateHostBuilder(args).Build();
-
-
-    //Pull out my registered DataService
-    var DataService = host.Services
-                          .CreateScope()
-                          .ServiceProvider
-                          .GetRequiredService<DataService>();
-
-    await DataService.ManageDataAsync();
-
-    host.Run();
-}
-
 // Add services to the container.
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -43,6 +26,17 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<DataService>();
 
 var app = builder.Build();
+
+// Adding CF solution here - Pull out my registered DataService
+var serviceProvider = app.Services.CreateScope().ServiceProvider;
+
+ApplicationDbContext context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+RoleManager<IdentityRole> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+UserManager<BlogUser> userManager = serviceProvider.GetRequiredService<UserManager<BlogUser>>();
+
+var dataService = new DataService(context, roleManager, userManager);
+await dataService.ManageDataAsync();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

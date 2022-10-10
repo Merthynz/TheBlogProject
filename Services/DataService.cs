@@ -4,7 +4,7 @@ using TheBlogProject.Data;
 using TheBlogProject.Enums;
 using TheBlogProject.Models;
 
-#nullable disable
+//#nullable disable
 
 namespace TheBlogProject.Services
 {
