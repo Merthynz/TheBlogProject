@@ -27,6 +27,7 @@ namespace TheBlogProject.Services
         {
             //Task: Create the DB from the Migrations
             await _dbContext.Database.MigrateAsync();
+
             //Task 1: Seed a few Roles into the system
             await SeedRolesAsync();
 
