@@ -13,9 +13,6 @@ function AddTag() {
     return true;
 }
 
-
-
-
 function DeleteTag() {
     let tagCount = 1;
     while (tagCount > 0) {
@@ -30,3 +27,7 @@ function DeleteTag() {
         index--;
     }
 }
+
+$("form").on("submit", function () {
+    $("#TagList option").prop("selected", "selected");
+})

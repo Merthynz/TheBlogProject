@@ -58,6 +58,7 @@ namespace TheBlogProject.Controllers
 
         public async Task<IActionResult> Details(string slug)
         {
+
             if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
@@ -66,6 +67,7 @@ namespace TheBlogProject.Controllers
             var post = await _context.Posts
                 .Include(p => p.Blog)
                 .Include(p => p.BlogUser)
+                .Include(p => p.Tags)
                 .FirstOrDefaultAsync(m => m.Slug == slug);
 
             if (post == null)
