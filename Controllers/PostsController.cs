@@ -117,13 +117,20 @@ namespace TheBlogProject.Controllers
                     ModelState.AddModelError("", "The Title you provided cannot be used as it results in an empty slug");
                 }
 
-                if(!_slugService.IsUnique(slug))
+                else if(!_slugService.IsUnique(slug))
                 {
                     validationError = true;
                     ModelState.AddModelError("Title", "The Title you provided cannot be used as it results in a duplicate slug.");
                 }
 
-                if(validationError)
+                else if(slug.Contains("test"))
+                {
+                    validationError = true;
+                    ModelState.AddModelError("", "Uh-oh, are you testing again??");
+                    ModelState.AddModelError("Title", "The Title cannot contain the word test");
+                }
+
+                if (validationError)
                 {
                     ViewData["TagValues"] = string.Join(",", tagValues);
                     return View(post);
