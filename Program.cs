@@ -29,6 +29,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); //Allow date
 
 //Register my custom DataService class
 builder.Services.AddScoped<DataService>();
+builder.Services.AddScoped<BlogSearchService>();
 
 //Register a preconfigured instance of the MailSettings class
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
