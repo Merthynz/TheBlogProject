@@ -12,6 +12,9 @@ using TheBlogProject.Models;
 using TheBlogProject.Services;
 using TheBlogProject.Enums;
 using X.PagedList;
+using TheBlogProject.ViewModels;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+
 
 #nullable disable
 
@@ -76,10 +79,64 @@ namespace TheBlogProject.Controllers
             return View(posts);
         }
 
-        //GET: Posts/Details/5
-        //public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> TagIndex(string tag)
+        {
+            // Get all Posts that contain this tag
+            var allPostIds = _context.Tags.Where(t => t.Text == tag).Select(t => t.PostId);
+            var posts = await _context.Posts.Where(p => allPostIds.Contains(p.Id)).ToListAsync();
+            return View("Index", posts);
+        }
+
+
+        public async Task<IActionResult> Details(string slug)
+        {
+            ViewData["Title"] = "Post Details Page";
+            if (string.IsNullOrEmpty(slug))
+                return NotFound();
+
+            var post = await _context.Posts
+                .Include(p => p.BlogUser)
+                .Include(p => p.Tags)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.BlogUser)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.Moderator)
+                .FirstOrDefaultAsync(m => m.Slug == slug);
+
+            if (post == null) return NotFound();
+
+            var dataVM = new PostDetailViewModel()
+            {
+                Post = post,
+                Tags = _context.Tags
+                        .Select(t => t.Text.ToLower())
+                        .Distinct().ToList()
+            };
+
+            //ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            //ViewData["MainText"] = post.Title;
+            ////ViewData["SubText"] = post.Abstract;
+            //ViewData["SubText"] = $"{post.Abstract} - Published by {post.BlogUser.FullName} on {post.Created.ToString("MMM dd, yyyy")}";
+
+            if (post.ImageData != null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            }
+            else
+            {
+                ViewData["HeaderImage"] = @Url.Content("~/assets/img/defaultheader.png");
+            }
+
+            ViewData["MainText"] = post.Title;
+            ViewData["SubText"] = $"{post.Abstract} - Published by {post.BlogUser.FullName} on {post.Created.ToString("MMM dd, yyyy")}";
+
+            return View(dataVM);
+        }
+
+        //public async Task<IActionResult> Details(string slug)
         //{
-        //    if (id == null || _context.Posts == null)
+
+        //    if (string.IsNullOrEmpty(slug))
         //    {
         //        return NotFound();
         //    }
@@ -87,7 +144,11 @@ namespace TheBlogProject.Controllers
         //    var post = await _context.Posts
         //        .Include(p => p.Blog)
         //        .Include(p => p.BlogUser)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //        .Include(p => p.Tags)
+        //        .Include(p => p.Comments)
+        //        .ThenInclude(c => c.BlogUser)
+        //        .FirstOrDefaultAsync(m => m.Slug == slug);
+
         //    if (post == null)
         //    {
         //        return NotFound();
@@ -95,30 +156,6 @@ namespace TheBlogProject.Controllers
 
         //    return View(post);
         //}
-
-        public async Task<IActionResult> Details(string slug)
-        {
-
-            if (string.IsNullOrEmpty(slug))
-            {
-                return NotFound();
-            }
-
-            var post = await _context.Posts
-                .Include(p => p.Blog)
-                .Include(p => p.BlogUser)
-                .Include(p => p.Tags)
-                .Include(p => p.Comments)
-                .ThenInclude(c => c.BlogUser)
-                .FirstOrDefaultAsync(m => m.Slug == slug);
-
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return View(post);
-        }
 
 
         // GET: Posts/Create

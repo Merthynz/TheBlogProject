@@ -18,6 +18,11 @@ namespace TheBlogProject.Services
             return $"data:image/{type};base64,{Convert.ToBase64String(data)}";
         }
 
+        public object DecodeImage(byte[] imageData)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<byte[]> EncodeImageAsync(IFormFile file)
         {
             if (file is null)

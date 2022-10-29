@@ -7,5 +7,6 @@
         string DecodeImage(byte[] data, string type);
         string ContentType(IFormFile file);
         int Size(IFormFile file);
+        object DecodeImage(byte[] imageData);
     }
 }
