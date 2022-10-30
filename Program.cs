@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
 using TheBlogProject.Services;
@@ -9,9 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(ConnectionService.GetConnectionString(builder.Configuration)));
+    //options.UseNpgsql(connectionString));
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
