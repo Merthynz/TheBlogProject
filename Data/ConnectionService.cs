@@ -11,6 +11,7 @@ namespace TheBlogProject.Data
             return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
         }
 
+        // Build the connection string from the environment. i.e. Heroku
         private static string BuildConnectionString(string databaseUrl)
         {
             var databaseUri = new Uri(databaseUrl);
